@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCT - Consulta de Compatibilidad</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        :root {
+            --verde-sct: #208271;
+            --verde-hover: #1a6b5d;
+            --verde-claro: #d1fae5;
+            --verde-texto: #065f46;
+            --rojo-error: #dc3545;
+            --rosa-inactivo: #fee2e2;
+            --rosa-texto: #991b1b;
+            --gris-fondo: #f4f7f6;
+            --blanco: #ffffff;
+            --sidebar-color: #2c3e50;
+            --sombra-suave: 0 4px 20px rgba(0,0,0,0.08);
+            --sombra-card: 0 8px 30px rgba(0,0,0,0.12);
+            --gradiente-hero: linear-gradient(135deg, #208271 0%, #1a6b5d 50%, #0f766e 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+            background-color: var(--gris-fondo);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar-color);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 30px 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--verde-sct);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--verde-sct);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 20px 0;
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin: 4px 16px;
+        }
+
+        .sidebar-nav li a {
+            color: #bdc3c7;
+            text-decoration: none;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .sidebar-nav li a:hover {
+            background: rgba(255,255,255,0.08);
+            color: white;
+        }
+
+        .sidebar-nav li a.active {
+            background: rgba(32, 130, 113, 0.2);
+            color: white;
+            border-left: 3px solid var(--verde-sct);
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .sidebar-footer {
+            padding: 20px 25px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--verde-sct);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: white;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: #95a5a6;
+        }
+
+        .logout-btn {
+            width: 100%;
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(220, 53, 69, 0.15);
+            color: #ff6b6b;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .logout-btn:hover {
+            background: rgba(220, 53, 69, 0.25);
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        /* ===== HERO ===== */
+        .hero-section {
+            background: var(--gradiente-hero);
+            padding: 50px 40px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+        }
+
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -5%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 50%;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.15);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-title {
+            font-size: 2.4rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            line-height: 1.6;
+            max-width: 600px;
+        }
+
+        /* ===== CONTENT ===== */
+        .content-area {
+            padding: 40px;
+            max-width: 1000px;
+        }
+
+        .consulta-card {
+            background: var(--blanco);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: var(--sombra-card);
+            margin-bottom: 30px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .card-header-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--verde-claro);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .card-header-text h2 {
+            font-size: 1.4rem;
+            color: #1a2c3e;
+            font-weight: 700;
+        }
+
+        .card-header-text p {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        /* ===== GRID ===== */
+        .seleccion-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .seleccion-grid { grid-template-columns: 1fr; gap: 25px; }
+            .sidebar { width: 100%; position: relative; height: auto; }
+            .main-content { margin-left: 0; }
+            .hero-section { padding: 30px 20px; }
+            .hero-title { font-size: 1.8rem; }
+            .content-area { padding: 20px; }
+            .consulta-card { padding: 25px; }
+        }
+
+        .tipo-sanguineo-section { position: relative; }
+
+        .section-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #1a2c3e;
+        }
+
+        .section-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .donante-icon { background: #dbeafe; }
+        .receptor-icon { background: #fce7f3; }
+        .donante-label { color: #1e40af; }
+        .receptor-label { color: #be185d; }
+
+        .selector-group { margin-bottom: 16px; }
+
+        .selector-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #4b5563;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .custom-select, .custom-input {
+            width: 100%;
+            padding: 14px 18px;
+            font-size: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            background: white;
+            color: #1a2c3e;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .custom-select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            background-size: 20px;
+            padding-right: 45px;
+        }
+
+        .custom-select:hover, .custom-input:hover { border-color: #d1d5db; }
+        .custom-select:focus, .custom-input:focus {
+            outline: none;
+            border-color: var(--verde-sct);
+            box-shadow: 0 0 0 4px rgba(32, 130, 113, 0.1);
+        }
+
+        .custom-input::placeholder {
+            color: #9aaebf;
+        }
+
+        .nombre-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .nombre-grid .selector-group:first-child {
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 768px) {
+            .nombre-grid { grid-template-columns: 1fr; }
+            .nombre-grid .selector-group:first-child {
+                grid-column: 1;
+            }
+        }
+
+        .preview-box {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 2px dashed #e5e7eb;
+            text-align: center;
+        }
+
+        .preview-label {
+            font-size: 0.8rem;
+            color: #6b7280;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .preview-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--verde-sct);
+        }
+
+        .preview-nombre {
+            font-size: 0.9rem;
+            color: #4b5563;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        .action-area {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn-verificar {
+            background: var(--verde-sct);
+            color: white;
+            border: none;
+            padding: 16px 50px;
+            border-radius: 14px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 15px rgba(32, 130, 113, 0.3);
+        }
+
+        .btn-verificar:hover {
+            background: var(--verde-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(32, 130, 113, 0.4);
+        }
+
+        .btn-verificar:active { transform: translateY(0); }
+
+        .btn-verificar:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-icon { font-size: 1.3rem; }
+
+        /* ===== INFO CARDS ===== */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .info-card {
+            background: var(--blanco);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: var(--sombra-suave);
+            transition: all 0.3s;
+        }
+
+        .info-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .info-card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+
+        .info-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1a2c3e;
+            margin-bottom: 8px;
+        }
+
+        .info-card p {
+            font-size: 0.9rem;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .consulta-card { animation: fadeIn 0.6s ease-out; }
+        .info-card { animation: fadeIn 0.6s ease-out 0.2s both; }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="/consulta" class="logo">
+                <div class="logo-icon">🩸</div>
+                <span>SCT</span>
+            </a>
+        </div>
+        <ul class="sidebar-nav">
+            <li><a href="/consulta" class="active"><span class="nav-icon">🔬</span><span>Consulta</span></a></li>
+            <li><a href="/historial"><span class="nav-icon">📋</span><span>Mi Historial</span></a></li>
+            <li><a href="/admin/usuarios"><span class="nav-icon">⚙️</span><span>Administración</span></a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">{{ session.get('nombre', 'U')[0].upper() }}</div>
+                <div class="user-details">
+                    <div class="user-name">{{ session.get('nombre', 'Usuario') }}</div>
+                    <div class="user-role">{{ session.get('rol', 'Usuario') }}</div>
+                </div>
+            </div>
+            <a href="/logout" class="logout-btn"><span>🚪</span><span>Cerrar Sesión</span></a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <section class="hero-section">
+            <div class="hero-content">
+                <div class="hero-badge"><span>🔬</span><span>Sistema de Compatibilidad de Transfusiones</span></div>
+                <h1 class="hero-title">Consulta de Compatibilidad Sanguínea</h1>
+                <p class="hero-subtitle">
+                    Ingresa los datos del donante y receptor para verificar
+                    la compatibilidad mediante nuestro motor experto basado en Prolog.
+                </p>
+            </div>
+        </section>
+
+        <div class="content-area">
+            <div class="consulta-card">
+                <div class="card-header">
+                    <div class="card-header-icon">🧪</div>
+                    <div class="card-header-text">
+                        <h2>Nueva Consulta</h2>
+                        <p>Completa los datos del donante y receptor</p>
+                    </div>
+                </div>
+
+                <div class="seleccion-grid">
+                    <!-- DONANTE -->
+                    <div class="tipo-sanguineo-section">
+                        <div class="section-label">
+                            <div class="section-icon donante-icon">💉</div>
+                            <span class="donante-label">Datos del Donante</span>
+                        </div>
+
+                        <div class="nombre-grid">
+                            <div class="selector-group">
+                                <label class="selector-label">Nombre(s)</label>
+                                <input type="text" id="donante_nombre" class="custom-input"
+                                       placeholder="Ej: Juan Carlos">
+                            </div>
+                            <div class="selector-group">
+                                <label class="selector-label">Apellido Paterno</label>
+                                <input type="text" id="donante_apellido_paterno" class="custom-input"
+                                       placeholder="Ej: Pérez">
+                            </div>
+                            <div class="selector-group">
+                                <label class="selector-label">Apellido Materno</label>
+                                <input type="text" id="donante_apellido_materno" class="custom-input"
+                                       placeholder="Ej: García">
+                            </div>
+                        </div>
+
+                        <div class="selector-group">
+                            <label class="selector-label">Grupo ABO</label>
+                            <select id="donante_tipo" class="custom-select" onchange="actualizarPreview()">
+                                <option value="" disabled selected>Selecciona el grupo...</option>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="AB">AB</option>
+                                <option value="O">O</option>
+                            </select>
+                        </div>
+                        <div class="selector-group">
+                            <label class="selector-label">Factor Rh</label>
+                            <select id="donante_rh" class="custom-select" onchange="actualizarPreview()">
+                                <option value="" disabled selected>Selecciona el factor...</option>
+                                <option value="+">Positivo (+)</option>
+                                <option value="-">Negativo (-)</option>
+                            </select>
+                        </div>
+                        <div class="preview-box">
+                            <div class="preview-label">Tipo Sanguíneo</div>
+                            <div class="preview-value" id="preview-donante">--</div>
+                            <div class="preview-nombre" id="preview-nombre-donante">--</div>
+                        </div>
+                    </div>
+
+                    <!-- RECEPTOR -->
+                    <div class="tipo-sanguineo-section">
+                        <div class="section-label">
+                            <div class="section-icon receptor-icon">🏥</div>
+                            <span class="receptor-label">Datos del Receptor</span>
+                        </div>
+
+                        <div class="nombre-grid">
+                            <div class="selector-group">
+                                <label class="selector-label">Nombre(s)</label>
+                                <input type="text" id="receptor_nombre" class="custom-input"
+                                       placeholder="Ej: María Elena">
+                            </div>
+                            <div class="selector-group">
+                                <label class="selector-label">Apellido Paterno</label>
+                                <input type="text" id="receptor_apellido_paterno" class="custom-input"
+                                       placeholder="Ej: López">
+                            </div>
+                            <div class="selector-group">
+                                <label class="selector-label">Apellido Materno</label>
+                                <input type="text" id="receptor_apellido_materno" class="custom-input"
+                                       placeholder="Ej: Sánchez">
+                            </div>
+                        </div>
+
+                        <div class="selector-group">
+                            <label class="selector-label">Grupo ABO</label>
+                            <select id="receptor_tipo" class="custom-select" onchange="actualizarPreview()">
+                                <option value="" disabled selected>Selecciona el grupo...</option>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="AB">AB</option>
+                                <option value="O">O</option>
+                            </select>
+                        </div>
+                        <div class="selector-group">
+                            <label class="selector-label">Factor Rh</label>
+                            <select id="receptor_rh" class="custom-select" onchange="actualizarPreview()">
+                                <option value="" disabled selected>Selecciona el factor...</option>
+                                <option value="+">Positivo (+)</option>
+                                <option value="-">Negativo (-)</option>
+                            </select>
+                        </div>
+                        <div class="preview-box">
+                            <div class="preview-label">Tipo Sanguíneo</div>
+                            <div class="preview-value" id="preview-receptor">--</div>
+                            <div class="preview-nombre" id="preview-nombre-receptor">--</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-area">
+                    <button id="btn-verificar" class="btn-verificar" onclick="realizarConsulta()">
+                        <span class="btn-icon">🔍</span>
+                        <span>Verificar Compatibilidad</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="info-card-icon" style="background: #dbeafe;">💡</div>
+                    <h3>Donante Universal</h3>
+                    <p>El tipo O- es considerado el donante universal, ya que carece de antígenos A, B y Rh, minimizando el riesgo de rechazo.</p>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-icon" style="background: #fce7f3;">🎯</div>
+                    <h3>Receptor Universal</h3>
+                    <p>El tipo AB+ es el receptor universal, ya que puede recibir sangre de cualquier tipo sin generar anticuerpos contra los antígenos.</p>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-icon" style="background: #d1fae5;">⚠️</div>
+                    <h3>Regla del Rh</h3>
+                    <p>Los receptores Rh negativos solo pueden recibir sangre Rh negativa. Los Rh positivos pueden recibir ambos tipos.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function actualizarPreview() {
+            const dTipo = document.getElementById('donante_tipo').value;
+            const dRh = document.getElementById('donante_rh').value;
+            const rTipo = document.getElementById('receptor_tipo').value;
+            const rRh = document.getElementById('receptor_rh').value;
+
+            document.getElementById('preview-donante').textContent = (dTipo && dRh) ? dTipo + dRh : '--';
+            document.getElementById('preview-receptor').textContent = (rTipo && rRh) ? rTipo + rRh : '--';
+
+            // Actualizar nombres en preview
+            const dNombre = document.getElementById('donante_nombre').value.trim();
+            const dAP = document.getElementById('donante_apellido_paterno').value.trim();
+            const dAM = document.getElementById('donante_apellido_materno').value.trim();
+            const rNombre = document.getElementById('receptor_nombre').value.trim();
+            const rAP = document.getElementById('receptor_apellido_paterno').value.trim();
+            const rAM = document.getElementById('receptor_apellido_materno').value.trim();
+
+            const nombreDonante = [dNombre, dAP, dAM].filter(Boolean).join(' ');
+            const nombreReceptor = [rNombre, rAP, rAM].filter(Boolean).join(' ');
+
+            document.getElementById('preview-nombre-donante').textContent = nombreDonante || 'Sin nombre';
+            document.getElementById('preview-nombre-receptor').textContent = nombreReceptor || 'Sin nombre';
+        }
+
+        // Actualizar preview cuando se escriben los nombres
+        document.querySelectorAll('.custom-input').forEach(input => {
+            input.addEventListener('input', actualizarPreview);
+        });
+
+        async function realizarConsulta() {
+            const donante = document.getElementById('donante_tipo').value + document.getElementById('donante_rh').value;
+            const receptor = document.getElementById('receptor_tipo').value + document.getElementById('receptor_rh').value;
+
+            const dNombre = document.getElementById('donante_nombre').value.trim();
+            const dAP = document.getElementById('donante_apellido_paterno').value.trim();
+            const dAM = document.getElementById('donante_apellido_materno').value.trim();
+            const rNombre = document.getElementById('receptor_nombre').value.trim();
+            const rAP = document.getElementById('receptor_apellido_paterno').value.trim();
+            const rAM = document.getElementById('receptor_apellido_materno').value.trim();
+
+            if (!donante || donante.length < 2 || !receptor || receptor.length < 2) {
+                alert('Por favor, selecciona completamente los tipos sanguíneos de donante y receptor.');
+                return;
+            }
+
+            if (!dNombre || !dAP || !rNombre || !rAP) {
+                alert('Por favor, ingresa al menos el nombre y apellido paterno del donante y del receptor.');
+                return;
+            }
+
+            const nombreDonante = [dNombre, dAP, dAM].filter(Boolean).join(' ');
+            const nombreReceptor = [rNombre, rAP, rAM].filter(Boolean).join(' ');
+
+            const boton = document.getElementById('btn-verificar');
+            boton.disabled = true;
+            boton.innerHTML = '<span class="btn-icon">⏳</span><span>Consultando motor Prolog...</span>';
+
+            try {
+                const response = await fetch('/api/verificar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        donante: donante,
+                        receptor: receptor,
+                        nombre_donante: nombreDonante,
+                        nombre_receptor: nombreReceptor
+                    })
+                });
+
+                const data = await response.json();
+
+                // Guardar nombres para mostrar en resultados
+                sessionStorage.setItem('resultado_transfusion', JSON.stringify(data));
+                sessionStorage.setItem('tipo_donante', donante);
+                sessionStorage.setItem('tipo_receptor', receptor);
+                sessionStorage.setItem('nombre_donante', nombreDonante);
+                sessionStorage.setItem('nombre_receptor', nombreReceptor);
+
+                window.location.href = '/resultados';
+
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Hubo un error al conectar con el servidor. Verifica tu conexión.");
+                boton.disabled = false;
+                boton.innerHTML = '<span class="btn-icon">🔍</span><span>Verificar Compatibilidad</span>';
+            }
+        }
+    </script>
+</body>
+</html>

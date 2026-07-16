@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCT - Crear Cuenta</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        :root {
+            --verde-sct: #208271;
+            --verde-hover: #1a6b5d;
+            --verde-claro: #d1fae5;
+            --gris-fondo: #f4f7f6;
+            --blanco: #ffffff;
+            --texto-oscuro: #1a2c3e;
+            --texto-suave: #5b6e8c;
+            --sombra-card: 0 8px 30px rgba(0,0,0,0.12);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+            background: var(--gris-fondo);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .register-container {
+            width: 100%;
+            max-width: 480px;
+        }
+
+        .register-card {
+            background: var(--blanco);
+            border-radius: 24px;
+            padding: 48px 40px;
+            box-shadow: var(--sombra-card);
+        }
+
+        .register-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .register-logo {
+            width: 64px;
+            height: 64px;
+            background: var(--verde-claro);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 20px;
+        }
+
+        .register-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--texto-oscuro);
+            margin-bottom: 8px;
+        }
+
+        .register-subtitle {
+            color: var(--texto-suave);
+            font-size: 1rem;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #4b5563;
+            margin-bottom: 8px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 14px 18px;
+            font-size: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            background: white;
+            color: var(--texto-oscuro);
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--verde-sct);
+            box-shadow: 0 0 0 4px rgba(32, 130, 113, 0.1);
+        }
+
+        .input-field::placeholder {
+            color: #9aaebf;
+        }
+
+        .terms-wrapper {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin: 16px 0 28px;
+            cursor: pointer;
+        }
+
+        .terms-wrapper input {
+            width: 18px;
+            height: 18px;
+            margin-top: 2px;
+            accent-color: var(--verde-sct);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .terms-wrapper label {
+            font-size: 0.85rem;
+            color: #2d3a4b;
+            line-height: 1.4;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .terms-wrapper a {
+            color: var(--verde-sct);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .terms-wrapper a:hover {
+            text-decoration: underline;
+        }
+
+        .btn-register {
+            background: var(--verde-sct);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            width: 100%;
+            padding: 16px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            box-shadow: 0 4px 15px rgba(32, 130, 113, 0.3);
+        }
+
+        .btn-register:hover {
+            background: var(--verde-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(32, 130, 113, 0.4);
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 28px;
+            padding-top: 24px;
+            border-top: 1px solid #edf2f7;
+            font-size: 0.95rem;
+            color: #5c6f87;
+        }
+
+        .login-footer a {
+            color: var(--verde-sct);
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .login-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            border-left: 4px solid #dc3545;
+            color: #991b1b;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .error-message.show {
+            display: flex;
+        }
+
+        .field-error {
+            font-size: 0.8rem;
+            color: #dc3545;
+            margin-top: 6px;
+            margin-left: 4px;
+            display: none;
+        }
+
+        .field-error.show {
+            display: block;
+        }
+
+        @media (max-width: 480px) {
+            .register-card { padding: 32px 24px; }
+            .register-title { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-card">
+            <div class="register-header">
+                <div class="register-logo">🩸</div>
+                <h1 class="register-title">Crear Cuenta</h1>
+                <p class="register-subtitle">Regístrate para comenzar</p>
+            </div>
+
+            <div class="error-message" id="errorMsg">
+                <span>⚠️</span> <span id="errorText">Error al crear cuenta. Inténtalo de nuevo.</span>
+            </div>
+
+            <form method="POST" action="/registro" id="registerForm" novalidate>
+                <div class="input-group">
+                    <label class="input-label" for="fullname">Nombre Completo</label>
+                    <input type="text" id="fullname" name="nombre" class="input-field"
+                           placeholder="Juan Pérez" required autocomplete="name">
+                    <div class="field-error" id="error-fullname">El nombre completo es obligatorio.</div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label" for="email">Correo Electrónico</label>
+                    <input type="email" id="email" name="correo" class="input-field"
+                           placeholder="tu@email.com" required autocomplete="email">
+                    <div class="field-error" id="error-email">Ingresa un correo válido.</div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label" for="password">Contraseña</label>
+                    <input type="password" id="password" name="password" class="input-field"
+                           placeholder="••••••••" required autocomplete="new-password">
+                    <div class="field-error" id="error-password">Mínimo 6 caracteres.</div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label" for="confirm_password">Confirmar Contraseña</label>
+                    <input type="password" id="confirm_password" name="confirm_password" class="input-field"
+                           placeholder="••••••••" required>
+                    <div class="field-error" id="error-confirm">Las contraseñas no coinciden.</div>
+                </div>
+
+                <div class="terms-wrapper">
+                    <input type="checkbox" id="termsCheckbox" name="acepta_terminos" value="1">
+                    <label for="termsCheckbox">
+                        Acepto los <a href="#">términos y condiciones</a> y la
+                        <a href="#">política de privacidad</a>
+                    </label>
+                </div>
+                <div class="field-error" id="error-terms" style="margin-top: -12px; margin-bottom: 12px;">
+                    Debes aceptar los términos.
+                </div>
+
+                <button type="submit" class="btn-register">Registrarse</button>
+            </form>
+
+            <div class="login-footer">
+                ¿Ya tienes cuenta? <a href="/login">Inicia sesión</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const errorParam = urlParams.get('error');
+            const errorMsgDiv = document.getElementById('errorMsg');
+            const errorTextSpan = document.getElementById('errorText');
+
+            if (errorParam === '1' || errorParam === 'email_exists') {
+                if (errorMsgDiv) {
+                    errorTextSpan.innerText = errorParam === 'email_exists'
+                        ? 'Este correo ya está registrado.'
+                        : 'Error al crear la cuenta.';
+                    errorMsgDiv.classList.add('show');
+                }
+            }
+
+            const form = document.getElementById('registerForm');
+            const fullname = document.getElementById('fullname');
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+            const confirm = document.getElementById('confirm_password');
+            const terms = document.getElementById('termsCheckbox');
+
+            function validate() {
+                let valid = true;
+
+                if (!fullname.value.trim()) {
+                    document.getElementById('error-fullname').classList.add('show');
+                    valid = false;
+                } else {
+                    document.getElementById('error-fullname').classList.remove('show');
+                }
+
+                const emailRegex = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
+                if (!emailRegex.test(email.value)) {
+                    document.getElementById('error-email').classList.add('show');
+                    valid = false;
+                } else {
+                    document.getElementById('error-email').classList.remove('show');
+                }
+
+                if (password.value.length < 6) {
+                    document.getElementById('error-password').classList.add('show');
+                    valid = false;
+                } else {
+                    document.getElementById('error-password').classList.remove('show');
+                }
+
+                if (password.value !== confirm.value) {
+                    document.getElementById('error-confirm').classList.add('show');
+                    valid = false;
+                } else {
+                    document.getElementById('error-confirm').classList.remove('show');
+                }
+
+                if (!terms.checked) {
+                    document.getElementById('error-terms').classList.add('show');
+                    valid = false;
+                } else {
+                    document.getElementById('error-terms').classList.remove('show');
+                }
+
+                return valid;
+            }
+
+            form.addEventListener('submit', function(e) {
+                if (!validate()) {
+                    e.preventDefault();
+                }
+            });
+        })();
+    </script>
+</body>
+</html>

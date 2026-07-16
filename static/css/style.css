@@ -1,0 +1,81 @@
+:root {
+    --verde-sct: #208271;
+    --verde-hover: #1a6b5d;
+    --rojo-error: #dc3545;
+    --rosa-inactivo: #fee2e2;
+    --gris-fondo: #f4f7f6;
+    --blanco: #ffffff;
+    --sidebar-color: #2c3e50;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--gris-fondo);
+    margin: 0;
+    display: flex;
+}
+
+/* Sidebar Estilo PDF */
+.sidebar {
+    width: 260px;
+    background-color: var(--sidebar-color);
+    color: white;
+    height: 100vh;
+    position: fixed;
+    padding: 20px 0;
+}
+
+.sidebar .logo {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 30px;
+    color: var(--verde-sct);
+}
+
+.sidebar ul { list-style: none; padding: 0; }
+.sidebar ul li a {
+    color: #bdc3c7;
+    text-decoration: none;
+    padding: 15px 25px;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidebar ul li a:hover, .sidebar ul li a.active {
+    background-color: #34495e;
+    color: white;
+    border-left: 4px solid var(--verde-sct);
+}
+
+/* Contenedor Principal */
+.main-content {
+    margin-left: 260px;
+    padding: 40px;
+    width: calc(100% - 260px);
+}
+
+/* Tarjetas y Tablas */
+.card {
+    background: var(--blanco);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+}
+
+.btn-primary {
+    background-color: var(--verde-sct);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-primary:hover { background-color: var(--verde-hover); }
+
+/* Badges de estado (Usa los de Guadalupe) */
+.badge.exitoso, .badge.activo { background: #d1fae5; color: #065f46; padding: 5px 10px; border-radius: 4px; }
+.badge.fallido, .badge.inactivo { background: var(--rosa-inactivo); color: #991b1b; padding: 5px 10px; border-radius: 4px; }

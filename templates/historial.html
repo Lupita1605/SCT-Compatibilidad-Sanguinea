@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>SCT - Mi Historial</title>
+    <!-- Tailwind CSS para el diseño -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <div class="flex h-screen">
+        <!-- Barra Lateral -->
+        <div class="w-64 bg-slate-800 text-white flex flex-col justify-between p-4">
+            <div>
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-10 h-10 bg-pink-500 rounded-full flex items-center justify-center">
+                        <i class="fas fa-drop text-white"></i>
+                    </div>
+                    <span class="text-2xl font-bold tracking-wider">SCT</span>
+                </div>
+                <nav class="space-y-2">
+                    <a href="/consulta" class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-700 transition">
+                        <i class="fas fa-stethoscope"></i> Consulta
+                    </a>
+                    <a href="/historial" class="flex items-center gap-3 p-3 rounded-lg bg-slate-700 transition font-semibold">
+                        <i class="fas fa-file-medical"></i> Mi Historial
+                    </a>
+                    <a href="/admin/usuarios" class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-700 transition">
+                        <i class="fas fa-user-cog"></i> Administración
+                    </a>
+                </nav>
+            </div>
+
+            <div class="border-t border-slate-700 pt-4">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center font-bold text-lg">
+                        L
+                    </div>
+                    <div>
+                        <p class="font-semibold text-sm">lupita</p>
+                        <p class="text-xs text-gray-400">usuario</p>
+                    </div>
+                </div>
+                <a href="/logout" class="w-full flex items-center justify-center gap-2 bg-rose-900/50 hover:bg-rose-900 text-rose-200 p-2 rounded-lg transition text-sm">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </a>
+            </div>
+        </div>
+
+        <!-- Contenido Principal -->
+        <div class="flex-1 flex flex-col overflow-y-auto">
+            <!-- Encabezado verde -->
+            <div class="bg-emerald-700 text-white p-8">
+                <h1 class="text-3xl font-bold mb-2">Mi Historial de Consultas</h1>
+                <p class="text-emerald-100">Revisa todas las consultas de compatibilidad que has realizado</p>
+            </div>
+
+            <div class="p-8 space-y-6">
+                <!-- Banner de Error dinámico -->
+                <div id="banner-error" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                    <strong class="font-bold">Error: </strong>
+                    <span id="mensaje-error" class="block sm:inline"></span>
+                </div>
+
+                <!-- Formulario de Filtros -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Fecha Inicio</label>
+                        <input type="date" id="fecha_inicio" class="w-full border border-gray-300 rounded-lg p-2.5 text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Fecha Fin</label>
+                        <input type="date" id="fecha_fin" class="w-full border border-gray-300 rounded-lg p-2.5 text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Resultado</label>
+                        <select id="resultado" class="w-full border border-gray-300 rounded-lg p-2.5 text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <option value="Todos">Todos</option>
+                            <option value="Compatible">Compatible</option>
+                            <option value="Incompatible">Incompatible</option>
+                        </select>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="cargarHistorial()" class="flex-1 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold py-2.5 px-4 rounded-lg transition shadow-sm">
+                            Filtrar
+                        </button>
+                        <button onclick="limpiarFiltros()" class="bg-gray-100 hover:bg-gray-200 text-gray-600 font-semibold py-2.5 px-4 rounded-lg transition border border-gray-300">
+                            Limpiar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tabla de Historial -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50 border-b border-gray-200 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                <th class="p-4">Fecha</th>
+                                <th class="p-4">Hora</th>
+                                <th class="p-4">Donante</th>
+                                <th class="p-4">Receptor</th>
+                                <th class="p-4">Resultado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-cuerpo" class="divide-y divide-gray-200 text-sm text-gray-700">
+                            <tr>
+                                <td colspan="5" class="text-center p-8 text-gray-400 italic">Cargando consultas...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript para consumir la API de Flask -->
+    <script>
+        // Carga automática al abrir la página
+        document.addEventListener('DOMContentLoaded', cargarHistorial);
+
+        function cargarHistorial() {
+            const errorBanner = document.getElementById('banner-error');
+            const errorMensaje = document.getElementById('mensaje-error');
+            const tablaCuerpo = document.getElementById('tabla-cuerpo');
+
+            errorBanner.classList.add('hidden');
+
+            // Obtener los valores de los filtros
+            const fechaInicio = document.getElementById('fecha_inicio').value;
+            const fechaFin = document.getElementById('fecha_fin').value;
+            const resultado = document.getElementById('resultado').value;
+
+            // Construcción correcta de la URL con los parámetros hacia la API de Python
+            let url = `/api/historial?fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}&resultado=${resultado}`;
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        // Si la respuesta no es 200, arrojamos un error controlado
+                        throw new Error(`Código de error del servidor: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    tablaCuerpo.innerHTML = '';
+
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+
+                    if (data.length === 0) {
+                        tablaCuerpo.innerHTML = `
+                            <tr>
+                                <td colspan="5" class="text-center p-8 text-gray-400 italic">No se encontraron consultas registradas.</td>
+                            </tr>`;
+                        return;
+                    }
+
+                    // Renderizado dinámico de filas
+                    data.forEach(item => {
+                        const esCompatible = item.resultado_compatibilidad;
+                        const badgeColor = esCompatible ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+                        const textoResultado = esCompatible ? 'Compatible' : 'Incompatible';
+
+                        const fila = `
+                            <tr class="hover:bg-gray-50 transition">
+                                <td class="p-4">${item.fecha}</td>
+                                <td class="p-4">${item.hora}</td>
+                                <td class="p-4 font-semibold">${item.tipo_donante}</td>
+                                <td class="p-4 font-semibold">${item.tipo_receptor}</td>
+                                <td class="p-4">
+                                    <span class="px-2.5 py-1 rounded-full text-xs font-medium ${badgeColor}">
+                                        ${textoResultado}
+                                    </span>
+                                </td>
+                            </tr>
+                        `;
+                        tablaCuerpo.innerHTML += fila;
+                    });
+                })
+                .catch(err => {
+                    errorMensaje.textContent = err.message;
+                    errorBanner.classList.remove('hidden');
+                    tablaCuerpo.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="text-center p-8 text-rose-400 italic">Error al cargar la información.</td>
+                        </tr>`;
+                });
+        }
+
+        function limpiarFiltros() {
+            document.getElementById('fecha_inicio').value = '';
+            document.getElementById('fecha_fin').value = '';
+            document.getElementById('resultado').value = 'Todos';
+            cargarHistorial();
+        }
+    </script>
+</body>
+</html>
