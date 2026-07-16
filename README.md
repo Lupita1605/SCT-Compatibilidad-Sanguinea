@@ -1,4 +1,18 @@
-# SCT - Sistema de Consulta de Compatibilidad de Transfusiones
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-337689?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
+  <img src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white" alt="Flask" />
+  <img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/Prolog-ED1C24?style=for-the-badge&logo=prolog&logoColor=white" alt="Prolog" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
+</p>
+
+<p align="center">
+  <b>Motor Experto de Transfusiones</b> • <b>Lógica Computacional</b> • <b>Base de Datos Segura</b>
+</p>
+
+---
+
+# 🩸 SCT - Sistema de Consulta de Compatibilidad de Transfusiones
 
 Este proyecto es una aplicación web diseñada para automatizar y verificar la compatibilidad sanguínea en transfusiones médicas utilizando un motor experto basado en Prolog.
 
@@ -15,10 +29,7 @@ Este proyecto fue realizado en equipo por los siguientes integrantes:
 ---
 
 ## 🛠️ Tecnologías Utilizadas
-* **Backend:** Python con Flask
-* **Base de Datos:** PostgreSQL
-* **Motor Experto:** Prolog (`prolog_engine.py` / `compatibilidad.pl`)
-* **Frontend:** HTML5, JavaScript (Fetch API) y Tailwind CSS
+El backend principal y la orquestación están desarrollados con **Python** y el microframework **Flask**. El motor de inferencia lógica corre bajo **Prolog** (`prolog_engine.py` / `compatibilidad.pl`), mientras que el almacenamiento persistente del historial y las sesiones se gestiona en **PostgreSQL**. La interfaz visual es responsiva gracias a **HTML5**, **JavaScript (Fetch API)** y **Tailwind CSS**.
 
 ---
 
