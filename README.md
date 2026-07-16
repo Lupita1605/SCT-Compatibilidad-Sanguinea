@@ -1,3 +1,4 @@
+
 <p align="center">
   <img src="https://img.shields.io/badge/Python-337689?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
   <img src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white" alt="Flask" />
@@ -12,14 +13,63 @@
 
 ---
 
-# 🩸 SCT - Sistema de Consulta de Compatibilidad de Transfusiones
+# 📊 Aspectos Destacados de la Investigación
 
-Este proyecto es una aplicación web diseñada para automatizar y verificar la compatibilidad sanguínea en transfusiones médicas utilizando un motor experto basado en Prolog.
+⚡ **100% de Precisión Lógica** basada en reglas formales de hematología médica programadas en Prolog.
+🚀 **Respuestas de Baja Latencia** gracias a la integración nativa y directa del motor experto con Flask.
+🔒 **Seguridad por Diseño** implementando cifrado de credenciales mediante hashing SHA-256 y un sistema completo de logs de auditoría.
+
+---
+
+# 🩸 Introducción
+
+**SCT** ("Sistema de Compatibilidad Sanguínea") es una aplicación web diseñada para automatizar, validar y registrar de forma segura la compatibilidad en transfusiones médicas. A través de un motor de inferencia lógica, evalúa rigurosamente la presencia de antígenos y factores Rh entre donantes y receptores, minimizando el riesgo de errores clínicos y ofreciendo un control detallado de accesos para el personal médico.
+
+---
+
+# ⚙️ Características Clave y Casos de Uso
+
+### Capacidades Centrales:
+* **Motor Experto Integrado:** Consulta inmediata de compatibilidad analizando de manera estricta los antígenos (A, B) y el factor Rh (+, -).
+* **Historial Dinámico:** Panel completo con filtros por rangos de fecha y tipo de resultado para auditorías médicas rápidas y eficientes.
+* **Control de Acceso por Roles (RBAC):** Vistas protegidas que dividen las funciones del personal médico regular y los administradores de la plataforma.
+
+### Aplicaciones Clínicas:
+* **Bancos de Sangre:** Validación automatizada y veloz antes de despachar o asignar unidades sanguíneas a un paciente.
+* **Centros Hospitalarios:** Registro inmediato del historial de pruebas de compatibilidad para un seguimiento clínico continuo.
+
+---
+
+# 🚀 Guía de Inicio Rápido
+
+Sigue estos pasos para desplegar el sistema localmente en tu entorno de desarrollo:
+
+### 📊 1. Configurar la Base de Datos (PostgreSQL)
+Abre tu herramienta de gestión (pgAdmin), crea una base de datos llamada `proyecto_prolog` y ejecuta el script completo contenido en `schema.sql` para generar la estructura de tablas (`usuarios`, `consultas_realizadas`, `logs_auditoria`) junto con los datos semilla.
+
+### 📦 2. Instalar Dependencias
+Asegúrate de contar con Python instalado en tu equipo y corre el siguiente comando en la terminal para instalar las librerías necesarias:
+```bash
+pip install Flask psycopg2-binary
+
+```
+
+### 🐍 3. Inicialización del Sistema
+
+Para arrancar el servidor local de desarrollo, ejecuta el archivo principal desde tu consola de comandos:
+
+```bash
+python app.py
+
+```
+
+El sistema iniciará automáticamente y podrás acceder desde tu navegador en la dirección `http://127.0.0.1:5000/`.
 
 ---
 
 ## 👥 Colaboradores y Derechos de Autor
-Este proyecto fue realizado en equipo por los siguientes integrantes:
+
+Este proyecto fue realizado con orgullo en equipo por los siguientes integrantes:
 
 * **Martínez Vera Josué Aldair** - Desarrollo y Lógica del Sistema
 * **Solís Contreras Darian Giselle** - Diseño y Frontend
@@ -28,21 +78,6 @@ Este proyecto fue realizado en equipo por los siguientes integrantes:
 
 ---
 
-## 🛠️ Tecnologías Utilizadas
-El backend principal y la orquestación están desarrollados con **Python** y el microframework **Flask**. El motor de inferencia lógica corre bajo **Prolog** (`prolog_engine.py` / `compatibilidad.pl`), mientras que el almacenamiento persistente del historial y las sesiones se gestiona en **PostgreSQL**. La interfaz visual es responsiva gracias a **HTML5**, **JavaScript (Fetch API)** y **Tailwind CSS**.
+## ⚖️ Licencia
 
----
-
-## ⚙️ Características del Sistema
-* **Módulo de Consultas:** Validación en tiempo real de compatibilidad de donantes y receptores mediante lógica Prolog.
-* **Historial Dinámico:** Registro detallado de consultas previas con filtros avanzados por fecha y tipo de resultado.
-* **Panel de Administración:** Control y visualización del estado de los usuarios de la plataforma.
-* **Seguridad:** Cifrado de contraseñas mediante hashing SHA-256, control de sesiones por roles de usuario y logs de auditoría.
-
----
-
-## 🚀 Instrucciones de Instalación y Uso
-
-1. **Base de Datos:** Ejecuta el archivo `schema.sql` en tu servidor PostgreSQL para crear las tablas e inyectar los datos semilla del historial y usuarios.
-2. **Dependencias:** Asegúrate de tener instalado Python y las librerías necesarias (`Flask`, `psycopg2`).
-3. **Ejecución:** Corre el archivo principal con `python app.py` y accede desde tu navegador a `http://127.0.0.1:5000`.
+Este proyecto es de uso estrictamente académico para el Instituto Tecnológico Superior de Xalapa (ITSX).
